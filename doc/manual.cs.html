@@ -1,0 +1,130 @@
+<!--  manual.cs.aft (c)2000 Stepan Roh - iso-8859-2 coding -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>Manu&aacute;l k webov&eacute;mu serveru shttpd </title>
+	<meta name="author" content="©t&igrave;p&aacute;n Roh">
+	<meta name="GENERATOR" content = "Almost Free Text v5.096; Copyright 1996-2005 Todd Coram. All rights reserved.">
+<style type="text/css">
+  <!--
+	.Default {background-color: rgb(255,255,255); color: rgb(0,0,0); font-family: 'Tahoma'; font-size: 12pt}
+	.Text-Background {background-color: rgb(255,255,255)}
+  -->
+</style>
+</head>
+<body>
+
+<br><center><h1><a name="AFT-top">Manu&aacute;l k webov&eacute;mu serveru shttpd </a></h1></center>
+<br><center><h2>©t&igrave;p&aacute;n Roh</h2></center>
+<center>Verze 0.3.1</center>
+<center>Revize dokumentu 1.2 (17.5.2009)</center>
+<p class="Body">
+<strong>Motto: 's' jako stupid.</strong>
+</p>
+<!-- Start SectLevel1 -->
+<h2><a name="Vlastnosti">Vlastnosti</a></h2>
+<p class="Body">
+shttpd je ur&egrave;en vesm&igrave;s k osobn&iacute;mu pou¾it&iacute;. M&ugrave;¾e ho spustit i oby&egrave;ejn&yacute;
+u¾ivatel, i kdy¾ mus&iacute; pou¾&iacute;vat &egrave;&iacute;sla port&ugrave; v&igrave;t¹&iacute; jak 1024. Podporuje
+rozumnou podmno¾inu HTTP/1.0 a HTTP/1.1 (bez virtu&aacute;ln&iacute;ch server&ugrave;,
+podm&iacute;n&igrave;n&yacute;ch GET a persistentn&iacute;ch spojen&iacute;). Um&iacute; pouze statick&eacute; str&aacute;nky, ¾&aacute;dn&aacute;
+dynamika (SSI, PHP a spol.). Z toho plyne, ¾e zvl&aacute;d&aacute; pouze metody GET, HEAD,
+OPTIONS a TRACE. Tak&eacute; nepodporuje ¾&aacute;dn&eacute; moduly.
+</p>
+<p class="Body">
+Ke sv&eacute;mu b&igrave;hu pot&oslash;ebuje konfigura&egrave;n&iacute; soubor. Standardn&igrave; je to shttpd.cfg v
+aktu&aacute;ln&iacute;m adres&aacute;&oslash;i, ale jm&eacute;no se d&aacute; zm&igrave;nit parametrem -f (viz shttpd -?).
+</p>
+<p class="Body">
+Pr&aacute;ce serveru se ukon&egrave;&iacute; pomoc&iacute; Ctrl-C (pracuje-li na pop&oslash;ed&iacute;) nebo posl&aacute;n&iacute;m
+n&igrave;kter&eacute;ho ze sign&aacute;l&ugrave; SIGINT, SIGHUP, SIGTERM.
+</p>
+<!--End Section 1-->
+<h2><a name="Vnitønosti">Vnit&oslash;nosti</a></h2>
+<p class="Body">
+Bez podpory vl&aacute;ken (d&aacute; se zjistit pomoc&iacute; shttpd -?) zvl&aacute;d&aacute; pouze jeden
+po¾adavek najednou. Jsou-li zakompilov&aacute;na vl&aacute;kna, tak se vl&aacute;kna vytv&aacute;&oslash;&iacute; tak
+dlouho ne¾ obslou¾&iacute; v¹echny po¾adavky nebo ne¾ po&egrave;et b&igrave;¾&iacute;c&iacute;ch vl&aacute;ken dos&aacute;hne
+zadan&eacute;ho limitu.
+</p>
+<!--End Section 1-->
+<h2><a name="Syntax konfiguraèního souboru">Syntax konfigura&egrave;n&iacute;ho souboru</a></h2>
+<p class="Body">
+Pozn&aacute;mky se uvozuj&iacute; znakem '#'. Konfigura&egrave;n&iacute; soubor se skl&aacute;d&aacute; z &oslash;&aacute;dk&ugrave; tvaru
+&lt;jm&eacute;no_prom&igrave;nn&eacute;&gt; &lt;hodnota&gt;. &Oslash;et&igrave;zcov&eacute; hodnoty se uv&aacute;d&iacute; v uvozovk&aacute;ch - v
+nich je mo¾no pou¾&iacute;vat i sekvence za&egrave;&iacute;naj&iacute;c&iacute; na '\' ('&quot;' znak uvozovky, '\'
+znak zp&igrave;tn&eacute; lom&iacute;tko, 'n' znak nov&aacute; &oslash;&aacute;dka, 't' znak tabul&aacute;tor, 'r' znak posun
+voz&iacute;ku alias CR).
+</p>
+<p class="Body">
+Pou¾iteln&eacute; prom&igrave;nn&eacute; :
+</p>
+<dl>
+<dt><strong><tt>min_threads</tt></strong></dt><dd> po&egrave;et vl&aacute;ken, kter&eacute; existuj&iacute; po celou dobu b&igrave;hu serveru (&uacute;&egrave;inkuje pouze p&oslash;i zakompilovan&eacute; podpo&oslash;e vl&aacute;ken); implicitn&igrave; : 4</dd>
+<dt><strong><tt>max_threads</tt></strong></dt><dd> maxim&aacute;ln&iacute; po&egrave;et sou&egrave;asn&igrave; existuj&iacute;c&iacute;ch vl&aacute;ken (nen&iacute;-li zakompilov&aacute;na podpora vl&aacute;ken, tak ur&egrave;uje pouze max. po&egrave;et &egrave;ekaj&iacute;c&iacute;ch po¾adavk&ugrave;);  implicitn&igrave; : 16</dd>
+<dt><strong><tt>port</tt></strong></dt><dd> TCP/IP port, na kter&eacute;m m&aacute; server naslouchat po¾adavk&ugrave;m (standardn&iacute; HTTP port je 80);  implicitn&igrave; : 8080</dd>
+<dt><strong><tt>access_log</tt></strong></dt><dd> jm&eacute;no souboru, do kter&eacute;ho se maj&iacute; ukl&aacute;dat informace o spojen&iacute;ch - m&aacute; &oslash;&aacute;dky form&aacute;tu : &quot;<tt>[datum a &egrave;as] adresa odkud &quot;prvn&iacute; &oslash;&aacute;dka po¾adavku&quot; stavov&yacute; k&oacute;d d&eacute;lka p&oslash;enesn&yacute;ch dat</tt>&quot; Zad&aacute;te-li jako jm&eacute;no '-' bez uvozovek, nebude se zapisovat nikam;  implicitn&igrave; : &quot;access_log.shttpd&quot;</dd>
+<dt><strong><tt>error_log</tt></strong></dt><dd> jm&eacute;no souboru, do kter&eacute;ho se maj&iacute; ukl&aacute;dat ruzn&eacute; hl&aacute;¹ky serveru - informa&egrave;n&iacute; i chybov&eacute;. Zad&aacute;te-li jako jm&eacute;no '-' bez uvozovek, nebude se zapisovat nikam;  implicitn&igrave; : &quot;error_log.shttpd&quot;</dd>
+<dt><strong><tt>log_level</tt></strong></dt><dd> nejni¾¹&iacute; &uacute;rove&ograve; hl&aacute;¹ek, kter&eacute; se maj&iacute; zapisovat do error logu. Mo¾n&eacute; hodnoty jsou (od nejni¾¹&iacute; k nejvy¹¹&iacute;) : LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERR, LOG_LEVEL_SYS, LOG_LEVEL_MAX (nebude se zapisovat nic);  implicitn&igrave; : LOG_LEVEL_INFO</dd>
+<dt><strong><tt>error_log_stderr</tt></strong></dt><dd> 1, pakli¾e se na stderr (standardn&iacute; chybov&yacute; v&yacute;stup) m&aacute; zapisovat to sam&eacute;, co do error logu - 0 jinak;  implicitn&igrave; : 1</dd>
+<dt><strong><tt>doc_root</tt></strong></dt><dd> adres&aacute;&oslash; s dokumenty k zobrazen&iacute;. Mus&iacute; na konci m&iacute;t znak lom&iacute;tko '/';  implicitn&igrave; : &quot;html/&quot;</dd>
+<dt><strong><tt>remote_names</tt></strong></dt><dd> 1, pakli¾e se do access logu ukl&aacute;d&aacute; jmenn&aacute; adresa - 0 pro &egrave;&iacute;selnou adresu (p&oslash;eklad z &egrave;&iacute;seln&eacute; na jmennou m&ugrave;¾e zdr¾ovat);  implicitn&igrave; : 1</dd>
+<dt><strong><tt>status_page</tt></strong></dt><dd> m&aacute; slo¾it&igrave;j¹&iacute; form&aacute;t &lt;stavov&yacute; k&oacute;d&gt; &lt;&oslash;et&igrave;zec&gt;, kter&yacute; p&oslash;i&oslash;azuje HTML odpov&igrave;&iuml; ur&egrave;it&eacute;mu stavov&eacute;mu k&oacute;du (nap&oslash;. 404, co¾ je Not Found). Zad&aacute;te-li jako &oslash;et&igrave;zec '-' bez uvozovek, po¹le se pouze HTTP hlavi&egrave;ka Status s pr&aacute;zdn&yacute;m t&igrave;lem. Prvn&iacute; sekvence '%s' v &oslash;et&igrave;zci se nahrad&iacute; jm&eacute;nem dokumentu, ke kter&eacute;mu se dan&aacute; chyba vztahuje;  implicitn&igrave; : v¹echny chyby generovan&eacute; serverem jsou definov&aacute;ny (jsou to 301, 400, 403, 404, 405, 505).</dd>
+<dt><strong><tt>index_file</tt></strong></dt><dd> jak&yacute; soubor m&aacute; server hledat, kdy¾ obdr¾&iacute; po¾adavek na adres&aacute;&oslash; bez jm&eacute;na souboru;  implicitn&igrave; : &quot;index.html&quot;</dd>
+<dt><strong><tt>media_type</tt></strong></dt><dd> media (MIME) typ, kter&yacute; se m&aacute; vracet v odpov&igrave;di, nejde-li zjistit z typu pos&iacute;lan&yacute;ch dat;  implicitn&igrave; : &quot;text/plain&quot;</dd>
+<dt><strong><tt>media_config</tt></strong></dt><dd> jm&eacute;no souboru s definic&iacute; media (MIME) typu. Zad&aacute;te-li jako jm&eacute;no '-' bez uvozovek, tak se ¾&aacute;dn&yacute; nena&egrave;te. Soubor m&aacute; &oslash;&aacute;dky form&aacute;tu : &quot;<tt>media (MIME) typ&nbsp;&nbsp;[p&oslash;&iacute;pona1 p&oslash;&iacute;pona2 ...]</tt>&quot; pop&oslash;&iacute;pad&igrave; s koment&aacute;&oslash;ov&yacute;mi &oslash;&aacute;dky za&egrave;&iacute;naj&iacute;c&iacute;mi '#'. P&oslash;&iacute;pony jsou bez &uacute;vodn&iacute; te&egrave;ky. Tento soubor slou¾&iacute; k rozezn&aacute;n&iacute; typu odes&iacute;lan&yacute;ch soubor&ugrave; na z&aacute;klad&igrave; jejich p&oslash;&iacute;pony;  implicitn&igrave; : &quot;mime.types&quot;</dd>
+</dl>
+<!--End Section 1-->
+<h2><a name="Zmìny mezi verzemi">Zm&igrave;ny mezi verzemi</a></h2>
+<p class="Body">
+Zm&igrave;ny z verze 0.3 na verzi 0.3.1 (17.5.2009)
+<ul>
+<li> BEZPE&Egrave;NOSTN&Iacute; OPRAVA: zamezen&iacute; voln&eacute;ho proch&aacute;zen&iacute; adres&aacute;&oslash;&ugrave;</li>
+</ul>
+</p>
+<p class="Body">
+Zm&igrave;ny z verze 0.2 na verzi 0.3 (3.10.2000)
+<ul>
+<li> p&oslash;i vracen&iacute; obsahu klientovi se data kop&iacute;ruj&iacute; po bloc&iacute;ch</li>
+<li> ukl&aacute;d&aacute;n&iacute; d&eacute;lky p&oslash;enesen&yacute;ch dat do access_logu</li>
+<li> ignorov&aacute;n&iacute; sign&aacute;lu SIGPIPE, kter&yacute; zp&ugrave;soboval ukon&egrave;en&iacute; b&igrave;hu serveru p&oslash;i p&oslash;eru¹en&iacute; spojen&iacute; ze strany klienta p&oslash;i p&oslash;enosu dat</li>
+<li> pos&iacute;l&aacute;n&iacute; sekvence CR LF na konci &oslash;&aacute;dk&ugrave; (dle RFC 2068)</li>
+<li> dokumentace ve form&aacute;tu aft</li>
+</ul>
+</p>
+<p class="Body">
+Zm&igrave;ny z verze 0.1 (5.1.2000) na verzi 0.2 (25.2.2000)
+<ul>
+<li> p&oslash;id&aacute;n&iacute; configure</li>
+<li> dod&igrave;l&aacute;n&iacute; generov&aacute;n&iacute; k&oacute;du 301 Moved Permanently</li>
+<li> oprava chyb</li>
+</ul>
+</p>
+<!--End Section 1-->
+<h2><a name="Známé chyby">Zn&aacute;m&eacute; chyby</a></h2>
+<ul>
+<li> IRIX 6.5 : do logu vypisuje ¹patn&igrave; IP adresu - z&oslash;ejm&igrave; chybn&aacute; syst&eacute;mov&aacute; implementace fce inet_ntoa()</li>
+<li> IRIX 6.5 : &quot;Segmentation fault&quot; p&oslash;i ukon&egrave;en&iacute; serveru zkompilovan&eacute;ho s vl&aacute;kny a bez lad&iacute;c&iacute;ch informac&iacute;</li>
+</ul>
+<!--End Section 1-->
+<h2><a name="Mo¾ná vylep¹ení do budoucna">Mo¾n&aacute; vylep¹en&iacute; do budoucna</a></h2>
+<ul>
+<li> Obsluha podm&iacute;n&igrave;n&yacute;ch GET (generov&aacute;n&iacute; k&oacute;du 304).</li>
+<li> Generov&aacute;n&iacute; Expires hlavi&egrave;ky.</li>
+<li> Generov&aacute;n&iacute; Last-Modified hlavi&egrave;ky.</li>
+<li> Generov&aacute;n&iacute; stavov&eacute; str&aacute;nky serveru.</li>
+<li> Lep¹&iacute; vyu¾it&iacute; do&egrave;asn&yacute;ch vl&aacute;ken.</li>
+<li> Dynamick&aacute; velikost v&yacute;stupn&iacute;ch buffer&ugrave;.</li>
+<li> Persistentn&iacute; spojen&iacute;.</li>
+<li> Virtu&aacute;ln&iacute; servery.</li>
+<li> Dynamick&eacute; str&aacute;nky a moduly.</li>
+</ul>
+<center>©t&igrave;p&aacute;n Roh &lt;src@post.cz&gt;</center>
+<!--End Section 1-->
+<!-- End SectLevel1 -->
+<hr>
+<br>
+<p align="right"> <small>This document was generated using <a class="link" href="http://www.maplefish.com/todd/aft.html">AFT v5.096</a></small> </p>
+</body>
+</html>
+

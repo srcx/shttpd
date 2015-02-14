@@ -1,0 +1,100 @@
+# shttpd Makefile (c)1999,2000 Stepan Roh
+
+# Useful definitions (change this if you are using other programs)
+# - compiler
+CC = @CC@
+# - archiver (librarian)
+AR = ar
+# - remove files utility (don't stop when files don't exist!)
+RM = rm -f
+# - copy utility
+CP = cp
+# - echo utility
+ECHO = @echo
+
+# Linker flags
+LDFLAGS = @LDFLAGS@
+
+# Compiler flags
+CFLAGS = @CFLAGS@
+
+# Libraries to link with
+LIBS = @LIBS@
+
+DOCS = doc/manual.html\
+doc/manual.cs.html
+
+# shttpd objects
+SHTTPD_OBJS = global.o\
+config.o\
+http.o\
+logfile.o\
+main.o\
+mime.o\
+request.o\
+resource.o\
+response.o\
+thread_mgr.o\
+utils.o
+
+# shttpd headers
+SHTTPD_HEADERS = aconfig.h\
+global.h\
+config.h\
+http.h\
+logfile.h\
+mime.h\
+request.h\
+resource.h\
+response.h\
+thread_mgr.h\
+utils.h
+
+# shttpd generated files
+SHTTPD_GENFILES = aconfig.h\
+Makefile\
+config.status\
+config.log\
+config.cache
+
+# SHTTPD executable name
+SHTTPD_NAME = shttpd@EXEEXT@
+
+.PHONY : all exe msg_begin msg_end clean cleanall distclean
+
+# Main target
+all : msg_begin exe msg_end
+
+# Make executable
+exe : $(SHTTPD_OBJS) $(SHTTPD_NAME)
+
+$(SHTTPD_NAME) : $(SHTTPD_OBJS) $(SHTTPD_HEADERS)
+	$(CC) $(LDFLAGS) -o $@ $(SHTTPD_OBJS) $(LIBS)
+
+# Messages
+msg_begin :
+	$(ECHO) "Compiling shttpd. Please wait..."
+
+msg_end :
+	$(ECHO) "All done."
+
+# Clean
+clean :
+	$(RM) $(SHTTPD_OBJS)
+
+# Clean all
+cleanall : clean
+	$(RM) $(SHTTPD_NAME)
+
+# Distribution cleaning
+distclean : cleanall
+	$(RM) $(SHTTPD_GENFILES)
+
+# Make object files from C files
+%.o : %.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+docs: $(DOCS)
+
+%.html: src/$(notdir %.aft)
+	aft --output=$@ --type=html $^

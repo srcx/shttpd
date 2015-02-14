@@ -1,0 +1,143 @@
+C---- manual.cs.aft (c)2000 Stepan Roh - iso-8859-2 coding
+*Title: Manuál k webovému serveru shttpd 
+*Author: ©tìpán Roh
+
+                        Verze 0.3.1
+                        Revize dokumentu 1.2 (17.5.2009)
+
+_Motto: 's' jako stupid._
+
+* Vlastnosti
+
+shttpd je urèen vesmìs k osobnímu pou¾ití. Mù¾e ho spustit i obyèejný
+u¾ivatel, i kdy¾ musí pou¾ívat èísla portù vìt¹í jak 1024. Podporuje
+rozumnou podmno¾inu HTTP/1.0 a HTTP/1.1 (bez virtuálních serverù,
+podmínìných GET a persistentních spojení). Umí pouze statické stránky, ¾ádná
+dynamika (SSI, PHP a spol.). Z toho plyne, ¾e zvládá pouze metody GET, HEAD,
+OPTIONS a TRACE. Také nepodporuje ¾ádné moduly.
+
+Ke svému bìhu potøebuje konfiguraèní soubor. Standardnì je to shttpd.cfg v
+aktuálním adresáøi, ale jméno se dá zmìnit parametrem -f (viz shttpd -?).
+
+Práce serveru se ukonèí pomocí Ctrl-C (pracuje-li na popøedí) nebo posláním
+nìkterého ze signálù SIGINT, SIGHUP, SIGTERM.
+
+* Vnitønosti
+
+Bez podpory vláken (dá se zjistit pomocí shttpd -?) zvládá pouze jeden
+po¾adavek najednou. Jsou-li zakompilována vlákna, tak se vlákna vytváøí tak
+dlouho ne¾ obslou¾í v¹echny po¾adavky nebo ne¾ poèet bì¾ících vláken dosáhne
+zadaného limitu.
+
+* Syntax konfiguraèního souboru
+
+Poznámky se uvozují znakem '#'. Konfiguraèní soubor se skládá z øádkù tvaru
+<jméno__promìnné> <hodnota>. Øetìzcové hodnoty se uvádí v uvozovkách - v
+nich je mo¾no pou¾ívat i sekvence zaèínající na '\' ('"' znak uvozovky, '\'
+znak zpìtné lomítko, 'n' znak nová øádka, 't' znak tabulátor, 'r' znak posun
+vozíku alias CR).
+
+Pou¾itelné promìnné :
+
+	[|min__threads|]
+	 poèet vláken, které existují po celou dobu bìhu serveru (úèinkuje
+	 pouze pøi zakompilované podpoøe vláken);
+	 implicitnì : 4
+	[|max__threads|]
+	 maximální poèet souèasnì existujících vláken (není-li zakompilována
+	 podpora vláken, tak urèuje pouze max. poèet èekajících po¾adavkù); 
+	 implicitnì : 16
+	[|port|]
+	 TCP/IP port, na kterém má server naslouchat po¾adavkùm (standardní
+	 HTTP port je 80); 
+	 implicitnì : 8080
+	[|access__log|]
+	 jméno souboru, do kterého se mají ukládat informace o spojeních - má
+	 øádky formátu :
+	  "|\[datum a èas] adresa odkud "první øádka po¾adavku" stavový kód délka pøenesných dat|"
+	 Zadáte-li jako jméno '-' bez uvozovek, nebude se zapisovat nikam; 
+	 implicitnì : "access__log.shttpd"
+	[|error__log|]
+	 jméno souboru, do kterého se mají ukládat ruzné hlá¹ky serveru -
+	 informaèní i chybové. Zadáte-li jako jméno '-' bez uvozovek, nebude
+	 se zapisovat nikam; 
+	 implicitnì : "error__log.shttpd"
+	[|log__level|]
+	 nejni¾¹í úroveò hlá¹ek, které se mají zapisovat do error logu. Mo¾né
+	 hodnoty jsou (od nejni¾¹í k nejvy¹¹í) : LOG__LEVEL__INFO, LOG__LEVEL__WARN,
+	 LOG__LEVEL__ERR, LOG__LEVEL__SYS, LOG__LEVEL__MAX (nebude se zapisovat nic); 
+	 implicitnì : LOG__LEVEL__INFO
+	[|error__log__stderr|]
+	 1, pakli¾e se na stderr (standardní chybový výstup) má zapisovat to
+	 samé, co do error logu - 0 jinak; 
+	 implicitnì : 1
+	[|doc__root|]
+	 adresáø s dokumenty k zobrazení. Musí na konci mít znak lomítko '/'; 
+	 implicitnì : "html/"
+	[|remote__names|]
+	 1, pakli¾e se do access logu ukládá jmenná adresa - 0 pro èíselnou
+	 adresu (pøeklad z èíselné na jmennou mù¾e zdr¾ovat); 
+	 implicitnì : 1
+	[|status__page|]
+	 má slo¾itìj¹í formát <stavový kód> <øetìzec>, který pøiøazuje
+	 HTML odpovìï urèitému stavovému kódu (napø. 404, co¾ je Not Found).
+	 Zadáte-li jako øetìzec '-' bez uvozovek, po¹le se pouze HTTP hlavièka
+	 Status s prázdným tìlem. První sekvence '%s' v øetìzci se nahradí
+	 jménem dokumentu, ke kterému se daná chyba vztahuje; 
+	 implicitnì : v¹echny chyby generované serverem jsou definovány
+	 	     (jsou to 301, 400, 403, 404, 405, 505).
+	[|index__file|]
+	 jaký soubor má server hledat, kdy¾ obdr¾í po¾adavek na adresáø bez
+	 jména souboru; 
+	 implicitnì : "index.html"
+	[|media__type|]
+	 media (MIME) typ, který se má vracet v odpovìdi, nejde-li zjistit z
+	 typu posílaných dat; 
+	 implicitnì : "text/plain"
+	[|media__config|]
+	 jméno souboru s definicí media (MIME) typu. Zadáte-li jako jméno '-'
+	 bez uvozovek, tak se ¾ádný nenaète. Soubor má øádky formátu :
+	  "|media (MIME) typ	\[pøípona1 pøípona2 ...]|"
+	 popøípadì s komentáøovými øádky zaèínajícími '#'. Pøípony jsou bez
+	 úvodní teèky. Tento soubor slou¾í k rozeznání typu odesílaných
+	 souborù na základì jejich pøípony; 
+	 implicitnì : "mime.types"
+
+* Zmìny mezi verzemi
+
+Zmìny z verze 0.3 na verzi 0.3.1 (17.5.2009)
+	* BEZPEÈNOSTNÍ OPRAVA: zamezení volného procházení adresáøù
+
+Zmìny z verze 0.2 na verzi 0.3 (3.10.2000)
+	* pøi vracení obsahu klientovi se data kopírují po blocích
+	* ukládání délky pøenesených dat do access__logu
+	* ignorování signálu SIGPIPE, který zpùsoboval ukonèení bìhu serveru
+	  pøi pøeru¹ení spojení ze strany klienta pøi pøenosu dat
+	* posílání sekvence CR LF na konci øádkù (dle RFC 2068)
+	* dokumentace ve formátu aft
+
+Zmìny z verze 0.1 (5.1.2000) na verzi 0.2 (25.2.2000)
+	* pøidání configure
+	* dodìlání generování kódu 301 Moved Permanently
+	* oprava chyb
+
+* Známé chyby
+
+	* IRIX 6.5 : do logu vypisuje ¹patnì IP adresu - zøejmì chybná
+	  systémová implementace fce inet__ntoa()
+	* IRIX 6.5 : "Segmentation fault" pøi ukonèení serveru zkompilovaného
+	  s vlákny a bez ladících informací
+
+* Mo¾ná vylep¹ení do budoucna
+
+	* Obsluha podmínìných GET (generování kódu 304).
+	* Generování Expires hlavièky.
+	* Generování Last-Modified hlavièky.
+	* Generování stavové stránky serveru.
+	* Lep¹í vyu¾ití doèasných vláken.
+	* Dynamická velikost výstupních bufferù.
+	* Persistentní spojení.
+	* Virtuální servery.
+	* Dynamické stránky a moduly.
+
+				©tìpán Roh <src@post.cz>
