@@ -1,5 +1,7 @@
 # shttpd
 
+**Warning: unmaintained since 2009!**
+
 Motto: 's' as stupid.
 
 ## Compilation and installation
